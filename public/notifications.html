@@ -10,7 +10,16 @@
     <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
 
     <style>
-        body { overflow-y: auto; background: var(--bg-dark); }
+        /* CRITICAL FIX: Flexbox forces the footer to the bottom of the screen */
+        body { 
+            overflow-y: auto; 
+            background: var(--bg-dark); 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+        }
+        
         .navbar { position: fixed; top: 0; width: 100%; padding: 15px 50px; background: rgba(13, 17, 23, 0.8); backdrop-filter: blur(15px); display: flex; justify-content: space-between; align-items: center; z-index: 100; box-sizing: border-box; border-bottom: 1px solid rgba(48, 54, 61, 0.5); }
         .nav-links { display: flex; align-items: center; }
         .nav-links a { color: var(--text-light); text-decoration: none; margin-left: 30px; font-weight: bold; transition: color 0.3s; text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem;}
@@ -20,7 +29,8 @@
         .page-header h1 { font-size: 3.5rem; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 10px; text-shadow: 0 0 20px rgba(0, 255, 204, 0.2); }
         .page-header p { color: #8b949e; font-size: 1.2rem; max-width: 600px; margin: 0 auto; line-height: 1.6; }
 
-        .alerts-container { max-width: 800px; margin: 0 auto; padding: 0 20px 80px 20px; }
+        /* CRITICAL FIX: flex: 1 makes this container stretch to fill empty screen space */
+        .alerts-container { max-width: 800px; margin: 0 auto; padding: 0 20px 80px 20px; flex: 1; width: 100%; box-sizing: border-box; }
         
         .alert-card { background: rgba(22, 27, 34, 0.85); padding: 25px; border-radius: 8px; border: 1px solid #30363d; border-left: 4px solid var(--quant-green); backdrop-filter: blur(5px); margin-bottom: 20px; display: flex; flex-direction: column; transition: transform 0.2s ease; }
         .alert-card:hover { transform: translateX(10px); background: rgba(30, 36, 44, 0.9); }
@@ -33,7 +43,8 @@
         .urgent { border-left-color: #ff007f; }
         .urgent .alert-type { color: #ff007f; }
 
-        footer { text-align: center; padding: 30px; background: #000; color: #8b949e; border-top: 1px solid #30363d; }
+        /* CRITICAL FIX: margin-top: auto locks it to the bottom */
+        footer { text-align: center; padding: 30px; background: #000; color: #8b949e; border-top: 1px solid #30363d; width: 100%; margin-top: auto; box-sizing: border-box; }
 
         /* --- VANTA MOBILE GLITCH FIXES --- */
         #webgl-background {
