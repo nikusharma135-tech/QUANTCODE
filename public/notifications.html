@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QUANT∑ODE | Our Work</title>
+    <title>QUANT∑ODE | Live Alerts</title>
     <link rel="stylesheet" href="style.css">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
@@ -20,24 +20,20 @@
         .page-header h1 { font-size: 3.5rem; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 10px; text-shadow: 0 0 20px rgba(0, 255, 204, 0.2); }
         .page-header p { color: #8b949e; font-size: 1.2rem; max-width: 600px; margin: 0 auto; line-height: 1.6; }
 
-        .timeline-container { max-width: 900px; margin: 0 auto; padding: 0 20px 80px 20px; position: relative; }
+        .alerts-container { max-width: 800px; margin: 0 auto; padding: 0 20px 80px 20px; }
         
-        .timeline-container::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 80px; width: 2px; background: linear-gradient(to bottom, var(--quant-green), #7000ff, transparent); transform: translateX(-50%); }
+        .alert-card { background: rgba(22, 27, 34, 0.85); padding: 25px; border-radius: 8px; border: 1px solid #30363d; border-left: 4px solid var(--quant-green); backdrop-filter: blur(5px); margin-bottom: 20px; display: flex; flex-direction: column; transition: transform 0.2s ease; }
+        .alert-card:hover { transform: translateX(10px); background: rgba(30, 36, 44, 0.9); }
+        
+        .alert-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; padding-bottom: 10px; margin-bottom: 15px; }
+        .alert-type { color: white; font-weight: bold; letter-spacing: 1px; font-size: 1.1rem; }
+        .alert-date { color: #8b949e; font-size: 0.85rem; font-family: monospace; }
+        .alert-body { color: var(--text-light); line-height: 1.6; font-size: 0.95rem; }
+        
+        .urgent { border-left-color: #ff007f; }
+        .urgent .alert-type { color: #ff007f; }
 
-        .timeline-item { width: 45%; margin-bottom: 50px; position: relative; }
-        .timeline-item:nth-child(odd) { float: left; clear: right; text-align: right; }
-        .timeline-item:nth-child(even) { float: right; clear: left; text-align: left; }
-        
-        .timeline-item::after { content: ''; position: absolute; top: 20px; width: 16px; height: 16px; background: #000; border: 3px solid var(--quant-green); border-radius: 50%; box-shadow: 0 0 15px var(--quant-green); }
-        .timeline-item:nth-child(odd)::after { right: -12.5%; transform: translateX(50%); }
-        .timeline-item:nth-child(even)::after { left: -12.5%; transform: translateX(-50%); }
-
-        .glass-panel { background: rgba(22, 27, 34, 0.85); padding: 30px; border-radius: 8px; border: 1px solid #30363d; backdrop-filter: blur(5px); transition: transform 0.3s ease, border-color 0.3s ease; }
-        .glass-panel:hover { transform: translateY(-5px); border-color: var(--quant-green); box-shadow: 0 10px 30px rgba(0, 255, 204, 0.1); }
-        
-        .date-badge { display: inline-block; padding: 5px 12px; border-radius: 4px; background: rgba(0, 255, 204, 0.1); color: var(--quant-green); font-size: 0.85rem; font-weight: bold; margin-bottom: 15px; letter-spacing: 1px; border: 1px solid rgba(0, 255, 204, 0.3); }
-        h3 { color: white; margin-top: 0; font-size: 1.5rem; letter-spacing: 1px; }
-        p { color: #8b949e; line-height: 1.6; font-size: 0.95rem; }
+        footer { text-align: center; padding: 30px; background: #000; color: #8b949e; border-top: 1px solid #30363d; }
 
         /* --- VANTA MOBILE GLITCH FIXES --- */
         #webgl-background {
@@ -56,14 +52,8 @@
 
         @media screen and (max-width: 768px) {
             .page-header { padding-top: 40px !important; }
-            .timeline-container::before { left: 20px; }
-            .timeline-item { width: 100%; float: none; clear: none; text-align: left; padding-left: 50px; box-sizing: border-box; }
-            .timeline-item:nth-child(odd)::after, .timeline-item:nth-child(even)::after { left: 20px; transform: translateX(-50%); right: auto; }
+            .alert-header { flex-direction: column; align-items: flex-start; gap: 5px; }
         }
-        
-        .clearfix::after { content: ""; clear: both; display: table; }
-
-        footer { text-align: center; padding: 30px; background: #000; color: #8b949e; border-top: 1px solid #30363d; clear: both; }
     </style>
 </head>
 <body>
@@ -74,8 +64,8 @@
         </a>
         <div class="nav-links">
             <a href="index.html">Home</a>
-            <a href="achievements.html" style="color: var(--quant-green);">Our Work</a>
-            <a href="notifications.html">Alerts</a>
+            <a href="achievements.html">Our Work</a>
+            <a href="notifications.html" style="color: var(--quant-green);">Alerts</a>
             <a href="people.html">Team</a>
             <a href="login.html" style="color: var(--quant-green); border: 1px solid var(--quant-green); padding: 8px 20px; border-radius: 4px; background: rgba(0, 255, 204, 0.05);">Terminal Access</a>
         </div>
@@ -84,25 +74,19 @@
     <div id="webgl-background"></div>
 
     <header class="page-header">
-        <h1>Our Work</h1>
-        <p>A chronological record of initiatives, hackathons, and platform developments driven by our core teams.</p>
+        <h1>Broadcast Alerts</h1>
+        <p>Live technical announcements, system updates, and official communications from the Executive Council.</p>
     </header>
 
-    <div class="timeline-container clearfix">
+    <div class="alerts-container">
         
-        <div class="timeline-item">
-            <div class="glass-panel">
-                <span class="date-badge">FEB 2026</span>
-                <h3>Secure Portal Deployment</h3>
-                <p>Engineered and deployed a bespoke full-stack web application featuring role-based access control, real-time material distribution, and an integrated Supreme Admin dashboard for internal club operations.</p>
+        <div class="alert-card urgent">
+            <div class="alert-header">
+                <span class="alert-type">SYSTEM DEPLOYMENT</span>
+                <span class="alert-date">FEB 2026</span>
             </div>
-        </div>
-
-        <div class="timeline-item">
-            <div class="glass-panel">
-                <span class="date-badge">3 JAN 2026</span>
-                <h3>Initiative Founded</h3>
-                <p>QUANT∑ODE was established at MNIT to bridge the critical gap between computer science, quantitative finance, and hedge fund mechanics.</p>
+            <div class="alert-body">
+                The new internal portal is live. All executive members and wing directors must initialize their terminal access immediately using their provided credentials to access the shared materials dashboard.
             </div>
         </div>
 
@@ -124,13 +108,14 @@
             minWidth: 200.00,
             scale: 1.00,
             scaleMobile: 1.00,
-            color: 0x00ffcc,        
-            backgroundColor: 0x0d1117, 
+            color: 0x00ffcc,
+            backgroundColor: 0x0d1117,
             points: isMobile ? 8.00 : 12.00,       
             maxDistance: isMobile ? 15.00 : 22.00, 
             spacing: isMobile ? 20.00 : 18.00,     
-            showDots: true          
+            showDots: true
         });
     </script>
 </body>
 </html>
+
