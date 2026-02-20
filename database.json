@@ -1,0 +1,143 @@
+{
+  "users": [
+    {
+      "username": "shreyash_251120",
+      "password": "25112006mnit",
+      "role": "superadmin",
+      "createdAt": "Initialization"
+    },
+    {
+      "username": "ADITYA_1532",
+      "password": "quant_aditya_js34",
+      "role": "admin",
+      "createdAt": "19/2/2026, 7:19:50 pm"
+    },
+    {
+      "username": "chetan_parmar_024",
+      "password": "Chetan@2402",
+      "role": "admin",
+      "createdAt": "19/2/2026, 7:19:59 pm"
+    },
+    {
+      "username": "abhay_pratap_iiita",
+      "password": "ransa_singh_123",
+      "role": "admin",
+      "createdAt": "19/2/2026, 7:20:09 pm"
+    },
+    {
+      "username": "taruna_gehlot",
+      "password": "TG_adv&js",
+      "role": "admin",
+      "createdAt": "19/2/2026, 7:21:06 pm"
+    },
+    {
+      "username": "atharv_porwal",
+      "password": "atharv_2025uce_js",
+      "role": "admin",
+      "createdAt": "19/2/2026, 8:47:31 pm"
+    },
+    {
+      "username": "soumay_iitbhu",
+      "password": "100may_bhu_wala",
+      "role": "admin",
+      "createdAt": "19/2/2026, 8:48:52 pm"
+    },
+    {
+      "username": "shivansh_singh",
+      "password": "iota_lota_uce",
+      "role": "admin",
+      "createdAt": "19/2/2026, 8:55:44 pm"
+    },
+    {
+      "username": "jitendra_kumar",
+      "password": "zeetu_jodhpur_wala",
+      "role": "admin",
+      "createdAt": "19/2/2026, 8:57:15 pm"
+    },
+    {
+      "username": "nikhil_",
+      "password": "nikhil_padhle_kabhi",
+      "role": "admin",
+      "createdAt": "19/2/2026, 8:58:46 pm"
+    },
+    {
+      "username": "riddhiman_pratap",
+      "password": "pratap_mech_ume",
+      "role": "admin",
+      "createdAt": "19/2/2026, 9:04:27 pm"
+    },
+    {
+      "username": "test_member",
+      "password": "67890",
+      "role": "member",
+      "createdAt": "19/2/2026, 9:17:37 pm"
+    },
+    {
+      "username": "kavin_bavisi",
+      "password": "jainne_mangalam",
+      "role": "admin",
+      "createdAt": "20/2/2026, 10:09:00 am"
+    },
+    {
+      "username": "poorva_pokharna",
+      "password": "exe_out_poorva_",
+      "role": "admin",
+      "createdAt": "20/2/2026, 2:09:13 pm"
+    },
+    {
+      "username": "harsh_chhabra",
+      "password": "exe_dsme_chhabra_6",
+      "role": "admin",
+      "createdAt": "20/2/2026, 2:32:36 pm"
+    }
+  ],
+  "notifications": [],
+  "materials": [
+    {
+      "id": 1771571853977,
+      "title": "",
+      "type": "pdf",
+      "link": "",
+      "date": "20/2/2026, 12:47:33 pm"
+    },
+    {
+      "id": 1771571852173,
+      "title": "",
+      "type": "pdf",
+      "link": "",
+      "date": "20/2/2026, 12:47:32 pm"
+    }
+  ],
+  "team": {
+    "exec_outreach": {
+      "name": "POORVA POKHARNA",
+      "tag": ""
+    },
+    "exec_design1": {
+      "tag": "",
+      "name": "CHETAN PARMAR"
+    },
+    "exec_design2": {
+      "tag": ""
+    },
+    "president": {
+      "tag": ""
+    },
+    "faculty1": {
+      "name": "[Name Pending]",
+      "tag": ""
+    },
+    "js_aiml": {
+      "tag": ""
+    },
+    "adj_dtu": {
+      "tag": ""
+    },
+    "js_event": {
+      "tag": ""
+    },
+    "exec_aiml": {
+      "tag": ""
+    }
+  }
+}

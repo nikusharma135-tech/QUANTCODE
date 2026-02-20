@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>QUANT∑ODE | Team</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+
+    <style>
+        body { overflow-y: auto; background: var(--bg-dark); }
+        .navbar { position: fixed; top: 0; width: 100%; padding: 15px 50px; background: rgba(13, 17, 23, 0.8); backdrop-filter: blur(15px); display: flex; justify-content: space-between; align-items: center; z-index: 100; box-sizing: border-box; border-bottom: 1px solid rgba(48, 54, 61, 0.5); }
+        .nav-links { display: flex; align-items: center; }
+        .nav-links a { color: var(--text-light); text-decoration: none; margin-left: 30px; font-weight: bold; transition: color 0.3s; text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem;}
+        .nav-links a:hover { color: var(--quant-green); }
+        
+        .page-header { padding: 120px 20px 40px 20px; text-align: center; }
+        .page-header h1 { font-size: 3.5rem; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 10px; text-shadow: 0 0 20px rgba(0, 255, 204, 0.2); }
+        .page-header p { color: #8b949e; font-size: 1.2rem; max-width: 600px; margin: 0 auto; line-height: 1.6; }
+
+        .team-container { max-width: 1200px; margin: 0 auto; padding: 0 20px 80px 20px; }
+        
+        .tier-section { margin-bottom: 60px; }
+        .tier-title { text-align: center; color: var(--text-light); border-bottom: 1px solid #30363d; padding-bottom: 15px; margin-bottom: 40px; letter-spacing: 2px; text-transform: uppercase; font-size: 1.4rem;}
+
+        .card-grid-1 { display: grid; grid-template-columns: 1fr; max-width: 350px; margin: 0 auto; gap: 30px; }
+        .card-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); max-width: 700px; margin: 0 auto; gap: 30px; }
+        .card-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+        .card-grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 25px; }
+        .card-grid-6 { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
+
+        .profile-card { background: rgba(22, 27, 34, 0.85); padding: 30px 20px; border-radius: 8px; border: 1px solid #30363d; backdrop-filter: blur(5px); transition: all 0.3s ease; text-align: center; }
+        .profile-card:hover { transform: translateY(-5px); border-color: var(--quant-green); box-shadow: 0 10px 25px rgba(0, 255, 204, 0.1); }
+        
+        .profile-img-container { width: 120px; height: 120px; margin: 0 auto 20px auto; border-radius: 50%; overflow: hidden; border: 2px solid #30363d; background: #000; transition: border-color 0.3s; }
+        .profile-card:hover .profile-img-container { border-color: var(--quant-green); }
+        .profile-img-container img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .vol-card { padding: 20px 15px; }
+        .vol-card .profile-img-container { width: 80px; height: 80px; margin-bottom: 15px; }
+
+        .role-badge { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; margin-bottom: 15px; letter-spacing: 1px; }
+        .badge-pres { background: rgba(255, 0, 127, 0.1); color: #ff007f; border: 1px solid #ff007f; }
+        .badge-core { background: rgba(112, 0, 255, 0.1); color: #7000ff; border: 1px solid #7000ff; }
+        .badge-wing { background: rgba(0, 255, 204, 0.1); color: var(--quant-green); border: 1px solid var(--quant-green); }
+        .badge-faculty { background: rgba(242, 169, 0, 0.1); color: #f2a900; border: 1px solid #f2a900; }
+        .badge-exec { background: rgba(255, 255, 255, 0.05); color: #c9d1d9; border: 1px solid #8b949e; }
+        .badge-adjunct { background: rgba(0, 170, 255, 0.1); color: #00aaff; border: 1px solid #00aaff; }
+        
+        .profile-card h3 { color: white; margin: 0; font-size: 1.2rem; letter-spacing: 1px; }
+        .profile-card .college-tag { color: #8b949e; font-size: 0.85rem; margin-top: 10px; font-family: monospace; }
+        .vol-card h3 { font-size: 1rem; }
+        
+        footer { text-align: center; padding: 30px; background: #000; color: #8b949e; border-top: 1px solid #30363d; }
+        
+        /* --- VANTA MOBILE GLITCH FIXES --- */
+        #webgl-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none; 
+        }
+
+        @supports (-webkit-touch-callout: none) {
+            #webgl-background { height: -webkit-fill-available; }
+        }
+
+        @media screen and (max-width: 768px) {
+            .card-grid-2 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" style="display: flex; align-items: center; gap: 15px; text-decoration: none;">
+            <img src="logo.jpg" alt="QUANT∑ODE Logo" class="nav-logo" style="height: 40px; width: 40px; border-radius: 50%;">
+            <h2 style="margin: 0; color: var(--quant-green); letter-spacing: 2px; font-size: 1.2rem;">QUANT∑ODE</h2>
+        </a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="achievements.html">Our Work</a>
+            <a href="notifications.html">Alerts</a>
+            <a href="people.html" style="color: var(--quant-green);">Team</a>
+            <a href="login.html" style="color: var(--quant-green); border: 1px solid var(--quant-green); padding: 8px 20px; border-radius: 4px; background: rgba(0, 255, 204, 0.05);">Terminal Access</a>
+        </div>
+    </nav>
+
+    <div id="webgl-background"></div>
+
+    <header class="page-header">
+        <h1>Command Structure</h1>
+        <p>The operational hierarchy driving MNIT's premier quantitative initiative.</p>
+    </header>
+
+    <div class="team-container">
+        
+        <div class="tier-section">
+            <h2 class="tier-title">Advisory Board</h2>
+            <div class="card-grid-2">
+                <div class="profile-card" style="border-top: 3px solid #f2a900;">
+                    <div class="profile-img-container"><img src="team/faculty1.jpg" onerror="this.onerror=null; this.src='placeholder.jpg';" alt="Faculty 1"></div>
+                    <span class="role-badge badge-faculty">FACULTY IN-CHARGE</span>
+                    <h3 id="name-faculty1">[Name Pending]</h3>
+                </div>
+                <div class="profile-card" style="border-top: 3px solid #f2a900;">
+                    <div class="profile-img-container"><img src="team/faculty2.jpg" onerror="this.onerror=null; this.src='placeholder.jpg';" alt="Faculty 2"></div>
+                    <span class="role-badge badge-faculty">FACULTY IN-CHARGE</span>
+                    <h3 id="name-faculty2">[Name Pending]</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="tier-section">
+            <h2 class="tier-title">Core Team</h2>
+            <div class="card-grid-1" style="margin-bottom: 30px;">
+                <div class="profile-card" style="border-top: 3px solid #ff007f;">
+                    <div class="profile-img-container"><img src="team/president.jpg" onerror="this.onerror=null; this.src='placeholder.jpg';" alt="President"></div>
+                    <span class="role-badge badge-pres">PRESIDENT</span>
+                    <h3 id="name-president">SHREYASH SHARMA</h3>
+                </div>
+            </div>
+
+            <div class="card-grid-2">
+                <div class="profile-card" style="border-top: 2px solid #ff007f;">
+                    <div class="profile-img-container"><img src="team/advisor.jpg" onerror="this.onerror=null; this.src='placeholder.jpg';" alt="Advisor"></div>
+                    <span class="role-badge badge-pres" style="background: transparent; border-color:  #ff007f; color: #ff007f;">ADVISOR TO THE PRESIDENT</span>
+                    <h3 id="name-advisor">TARUNA GEHLOT</h3>
+                </div>
+                <div class="profile-card" style="border-top: 2px solid #ff007f;">
+                    <div class="profile-img-container"><img src="team/treasurer.jpg" onerror="this.onerror=null; this.src='placeholder.jpg';" alt="Treasurer"></div>
+                    <span class="role-badge badge-pres" style="background: transparent; border-color: #ff007f; color:  #ff007f;">TREASURER</span>
+                    <h3 id="name-treasurer">RAGHAV PUROHIT</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="tier-section">
+            <h2 class="tier-title">Central Operations</h2>
+            <div class="card-grid-4">
+                <div class="profile-card" style="border-top: 3px solid #7000ff;">
+                    <div class="profile-img-container"><img src="team/vp1.jpg" onerror="this.onerror=null; this.src='placeholder.jpg';" alt="VP 1"></div>
+                    <span class="role-badge badge-core">VICE-PRESIDENT</span>
+                    <h3 id="name-vp1">RIDDHIMAN PRATAP SINGH</h3>
+                </div>
+                <div class="profile-card" style="border-top: 3px solid #7000ff;">
+                    <div class="profile-img-container"><img src="team/vp2.jpg" onerror="this.onerror=null; this.src='placeholder.jpg';" alt="VP 2"></div>
+                    <span class="role-badge badge-core">VICE-PRESIDENT</span>
+                    <h3 id="name-vp2">NIKHIL</h3>
+                </div>
+                <div class="profile-card" style="border-top: 3px solid #7000ff;">
+                    <div class="profile-img-container"><img src="team/gensec1.jpg" onerror="this.onerror=null; this.src='placeholder.jpg';" alt="Gen Sec 1"></div>
+                    <span class="role-badge badge-core">GENERAL SECRETARY</span>
+                    <h3 id="name-gensec1">ADITYA SINGH</h3>
+                </div>
+                <div class="profile-card" style="border-top: 3px solid #7000ff;">
+                    <div class="profile-img-container"><img src="team/gensec2.jpg" onerror="this.onerror=null; this.src='placeholder.jpg';" alt="Gen Sec 2"></div>
+                    <span class="role-badge badge-core">GENERAL SECRETARY</span>
+                    <h3 id="name-gensec2">JITENDRA KUMAR</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="tier-section">
+            <h2 class="tier-title">Functional Wing Directors</h2>
+            <div class="card-grid-3">
+                <div class="profile-card" style="border-top: 3px solid var(--quant-green);">
+                    <div class="profile-img-container"><img src="team/js_logistics.jpg" onerror="this.onerror=null; this.src='placeholder.jpg';" alt="JS Logistics"></div>
+                    <span class="role-badge badge-wing">JOINT SEC. (LOGISTICS)</span>
+                    <h3 id="name-js_logistics">SHIVANSH SINGH</h3>
+                </div>
+                <div class="profile-card" style="border-top: 3px solid var(--quant-green);">
+                    <div class="profile-img-container"><img src="team/js_event.jpg" onerror="this.onerror=null; this.src='placeholder.jpg';" alt="JS Event"></div>
+                    <span class="role-badge badge-wing">JOINT SEC. (EVENT)</span>
+                    <h3 id="name-js_event">ADITYA SAHU</h3>
+                </div>
+                <div class="profile-card" style="border-top: 3px solid var(--quant-green);">
+                    <div class="profile-img-container"><img src="team/js_outreach.jpg" onerror="this.onerror=null; this.src='placeholder.jpg';" alt="JS Outreach"></div>
+                    <span class="role-badge badge-wing">JOINT SEC. (OUTREACH)</span>
+                    <h3 id="name-js_outreach">TARUNA GEHLOT</h3>
+                </div>
+                <div class="profile-card" style="border-top: 3px solid var(--quant-green);">
+                    <div class="profile-img-container"><img src="team/js_finance.jpg" onerror="this.onerror=null; this.src='placeholder.jpg';" alt="JS Finance"></div>
+                    <span class="role-badge badge-wing">JOINT SEC. (FINANCE & DATA)</span>
+                    <h3 id="name-js_finance">ARYAN SONI</h3>
+                </div>
+                <div class="profile-card" style="border-top: 3px solid var(--quant-green);">
+                    <div class="profile-img-container"><img src="team/js_quantum.jpg" onerror="this.onerror=null; this.src='placeholder.jpg';" alt="JS Quantum"></div>
+                    <span class="role-badge badge-wing">JOINT SEC. (QUANTUM COMP)</span>
+                    <h3 id="name-js_quantum">ATHARV PORWAL</h3>
+                </div>
+                <div class="profile-card" style="border-top: 3px solid var(--quant-green);">
+                    <div class="profile-img-container"><img src="team/js_aiml.jpg" onerror="this.onerror=null; this.src='placeholder.jpg';" alt="JS AIML"></div>
+                    <span class="role-badge badge-wing">JOINT SEC. (AI/ML)</span>
+                    <h3 id="name-js_aiml">RITVIK</h3>
+                </div>
+            </div>
+
+            <h3 style="text-align: center; color: var(--text-light); margin-top: 50px; margin-bottom: 30px; letter-spacing: 2px; text-transform: uppercase;">Adjunct Secretaries</h3>
+            <div class="card-grid-4">
+                <div class="profile-card" style="border-top: 3px solid #00aaff;">
+                    <div class="profile-img-container"><img src="team/adj_bhu.jpg" onerror="this.onerror=null; this.src='placeholder.jpg';" alt="Adjunct"></div>
+                    <span class="role-badge badge-adjunct">ADJUNCT SEC. (IIT BHU)</span>
+                    <h3 id="name-adj_bhu">SOUMAY AGARWAL</h3>
+                    <p class="college-tag" id="tag-adj_bhu">B.TECH CSE</p>
+                </div>
+                <div class="profile-card" style="border-top: 3px solid #00aaff;">
+                    <div class="profile-img-container"><img src="team/adj_iiit.jpg" onerror="this.onerror=null; this.src='placeholder.jpg';" alt="Adjunct"></div>
+                    <span class="role-badge badge-adjunct">ADJUNCT SEC. (IIIT ALLAHABAD)</span>
+                    <h3 id="name-adj_iiit">ABHAY PRATAP SINGH</h3>
+                    <p class="college-tag" id="tag-adj_iiit">B.TECH IT</p>
+                </div>
+                <div class="profile-card" style="border-top: 3px solid #00aaff;">
+                    <div class="profile-img-container"><img src="team/adj_dtu.jpg" onerror="this.onerror=null; this.src='placeholder.jpg';" alt="Adjunct"></div>
+                    <span class="role-badge badge-adjunct">ADJUNCT SEC. (DTU)</span>
+                    <h3 id="name-adj_dtu">HAPPY KUMAR</h3>
+                    <p class="college-tag" id="tag-adj_dtu">B.TECH IT</p>
+                </div>
+                <div class="profile-card" style="border-top: 3px solid #00aaff;">
+                    <div class="profile-img-container"><img src="team/adj_vnit.jpg" onerror="this.onerror=null; this.src='placeholder.jpg';" alt="Adjunct"></div>
+                    <span class="role-badge badge-adjunct">ADJUNCT SEC. (VNIT)</span>
+                    <h3 id="name-adj_vnit">KAVIN BAVISI</h3>
+                    <p class="college-tag" id="tag-adj_vnit">B.TECH ECE</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tier-section">
+            <h2 class="tier-title">Executive Board</h2>
+            <div class="card-grid-4">
+                <div class="profile-card vol-card"><div class="profile-img-container"><img src="team/exec_logistics.jpg" onerror="this.onerror=null; this.src='placeholder.jpg';"></div><span class="role-badge badge-exec">EXEC. (LOGISTICS)</span><h3 id="name-exec_logistics">[Name Pending]</h3><p class="college-tag" id="tag-exec_logistics"></p></div>
+                <div class="profile-card vol-card"><div class="profile-img-container"><img src="team/exec_design1.jpg" onerror="this.onerror=null; this.src='placeholder.jpg';"></div><span class="role-badge badge-exec">EXEC. (DESIGN/MEDIA)</span><h3 id="name-exec_design1">PARMAAR CHETANBHAI</h3><p class="college-tag" id="tag-exec_design1"></p></div>
+                <div class="profile-card vol-card"><div class="profile-img-container"><img src="team/exec_design2.jpg" onerror="this.onerror=null; this.src='placeholder.jpg';"></div><span class="role-badge badge-exec">EXEC. (DESIGN/MEDIA)</span><h3 id="name-exec_design2">HARSH CHHABRA</h3><p class="college-tag" id="tag-exec_design2"></p></div>
+                <div class="profile-card vol-card"><div class="profile-img-container"><img src="team/exec_outreach.jpg" onerror="this.onerror=null; this.src='placeholder.jpg';"></div><span class="role-badge badge-exec">EXEC. (OUTREACH)</span><h3 id="name-exec_outreach">POORVA</h3><p class="college-tag" id="tag-exec_outreach"></p></div>
+                <div class="profile-card vol-card"><div class="profile-img-container"><img src="team/exec_finance.jpg" onerror="this.onerror=null; this.src='placeholder.jpg';"></div><span class="role-badge badge-exec">EXEC. (FINANCE)</span><h3 id="name-exec_finance">[Name Pending]</h3><p class="college-tag" id="tag-exec_finance"></p></div>
+                <div class="profile-card vol-card"><div class="profile-img-container"><img src="team/exec_quantum.jpg" onerror="this.onerror=null; this.src='placeholder.jpg';"></div><span class="role-badge badge-exec">EXEC. (QUANTUM)</span><h3 id="name-exec_quantum">[Name Pending]</h3><p class="college-tag" id="tag-exec_quantum"></p></div>
+                <div class="profile-card vol-card"><div class="profile-img-container"><img src="team/exec_aiml.jpg" onerror="this.onerror=null; this.src='placeholder.jpg';"></div><span class="role-badge badge-exec">EXEC. (AI/ML)</span><h3 id="name-exec_aiml">VIVEK JANGIR</h3><p class="college-tag" id="tag-exec_aiml"></p></div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <p style="letter-spacing: 1px;">QUANT∑ODE &copy; 2026 | MNIT's Premier Quantitative Initiative</p>
+    </footer>
+
+<script>
+        // CMS Dynamic Name & Tag Fetcher (Keep this if it's on your people.html page)
+        if(window.location.pathname.includes('people.html')) {
+            fetch('/api/team').then(res => res.json()).then(data => {
+                for (const [roleId, info] of Object.entries(data)) {
+                    const nameEl = document.getElementById('name-' + roleId);
+                    const tagEl = document.getElementById('tag-' + roleId);
+                    if (nameEl && info.name) nameEl.innerText = info.name;
+                    if (tagEl && info.tag) tagEl.innerText = info.tag;
+                }
+            }).catch(e => console.log('CMS fetch skipped on non-team page.'));
+        }
+
+        // Smart Screen Detection
+        const isMobile = window.innerWidth <= 768;
+        
+        VANTA.NET({
+            el: "#webgl-background",
+            
+            // Stops the canvas from glitching when scrolling on mobile
+            mouseControls: !isMobile, 
+            touchControls: !isMobile, 
+            
+            gyroControls: false,
+            minHeight: 200.00,
+            minWidth: 200.00,
+            scale: 1.00,
+            scaleMobile: 1.00,
+            color: 0x00ffcc,
+            backgroundColor: 0x0d1117,
+            
+            // --- THE "MEDIUM ZONE" MATH ---
+            // points: Brought up to 8 (gives a solid structure without overcrowding)
+            points: isMobile ? 8.00 : 12.00,       
+            
+            // maxDistance: Reaches just far enough to make triangles, but not giant webs
+            maxDistance: isMobile ? 15.00 : 22.00, 
+            
+            // spacing: Keeps the clusters comfortably separated
+            spacing: isMobile ? 20.00 : 18.00,     
+            
+            showDots: true
+        });
+    </script>
+</body>
+</html>

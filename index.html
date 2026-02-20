@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>QUANT∑ODE | Home</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+
+    <style>
+        body { overflow-y: auto; }
+        .navbar { position: fixed; top: 0; width: 100%; padding: 15px 50px; background: rgba(13, 17, 23, 0.8); backdrop-filter: blur(15px); display: flex; justify-content: space-between; align-items: center; z-index: 100; box-sizing: border-box; border-bottom: 1px solid rgba(48, 54, 61, 0.5); }
+        .nav-links { display: flex; align-items: center; }
+        .nav-links a { color: var(--text-light); text-decoration: none; margin-left: 30px; font-weight: bold; transition: color 0.3s; text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem;}
+        .nav-links a:hover { color: var(--quant-green); }
+        .hero-section { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; text-align: center; padding: 0 20px; }
+        
+        .glass-panel { background: rgba(13, 17, 23, 0.6); border: 1px solid rgba(48, 54, 61, 0.5); box-shadow: 0 25px 50px rgba(0,0,0,0.5); backdrop-filter: blur(10px); }
+        
+        .content-section { padding: 80px 10%; background: var(--bg-dark); position: relative; z-index: 10; border-top: 1px solid #30363d; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px; }
+        
+        /* New Grid for 4 Wings */
+        .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-top: 40px; }
+        
+        .feature-card { background: var(--panel-bg); padding: 30px; border-radius: 10px; border: 1px solid #30363d; border-top: 3px solid var(--quant-green); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); height: 100%; box-sizing: border-box; }
+        .feature-card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0, 255, 204, 0.15); border-color: var(--quant-green); }
+        footer { text-align: center; padding: 30px; background: #000; color: #8b949e; border-top: 1px solid #30363d; position: relative; z-index: 10; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" style="display: flex; align-items: center; gap: 15px; text-decoration: none;">
+            <img src="logo.jpg" alt="QUANT∑ODE Logo" class="nav-logo">
+            <h2 style="margin: 0; color: var(--quant-green); letter-spacing: 2px;">QUANT∑ODE</h2>
+        </a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="achievements.html">Our Work</a>
+            <a href="notifications.html">Alerts</a>
+            <a href="people.html">Team</a>
+            <a href="login.html" style="color: var(--quant-green); border: 1px solid var(--quant-green); padding: 8px 20px; border-radius: 4px; background: rgba(0, 255, 204, 0.05);">Terminal Access</a>
+        </div>
+    </nav>
+
+    <div id="webgl-background" style="position: fixed; z-index: -1; left: 0; top: 0; width: 100%; height: 100vh;"></div>
+
+    <section class="hero-section">
+        <div class="glass-panel" style="max-width: 800px; padding: 60px; border-radius: 12px;">
+            <h1 style="font-size: 4.5rem; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 4px; text-shadow: 0 0 30px rgba(0, 255, 204, 0.3);">QUANT∑ODE</h1>
+            <p style="color: #8b949e; font-size: 1.2rem; margin-bottom: 40px; letter-spacing: 1px;">Bridging the gap between algorithms, capital, and code.</p>
+            <div style="display: flex; justify-content: center; gap: 20px;">
+                <button style="width: 200px; text-transform: uppercase; letter-spacing: 1px;" onclick="window.location.href='login.html'">Initialize Terminal</button>
+                <button style="width: 200px; background: transparent; border: 1px solid var(--quant-green); color: var(--quant-green); text-transform: uppercase; letter-spacing: 1px;" onclick="window.scrollTo({top: window.innerHeight, behavior: 'smooth'})">Explore</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="content-section">
+        <h2 style="font-size: 2.5rem; text-align: center; letter-spacing: 2px;">Our Focus</h2>
+        <p style="text-align: center; color: #8b949e; max-width: 700px; margin: 0 auto; line-height: 1.6;">We don't just write code; we build financial models. We focus on applying computer science to modern market mechanics.</p>
+        
+        <div class="grid-3">
+            <div class="feature-card">
+                <h3 style="color: white; letter-spacing: 1px;">Algorithmic Trading</h3>
+                <p style="color: #8b949e; line-height: 1.6;">Developing quantitative models to identify market inefficiencies and execute automated, high-frequency strategies.</p>
+            </div>
+            <div class="feature-card">
+                <h3 style="color: white; letter-spacing: 1px;">Hedge Fund Mechanics</h3>
+                <p style="color: #8b949e; line-height: 1.6;">Analyzing risk management, portfolio optimization, and the architecture of modern financial institutions.</p>
+            </div>
+            <div class="feature-card">
+                <h3 style="color: white; letter-spacing: 1px;">Full-Stack Development</h3>
+                <p style="color: #8b949e; line-height: 1.6;">Building robust backend systems and interactive dashboards to visualize complex financial data in real-time.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="content-section" style="background: rgba(13, 17, 23, 0.95); border-top: none; padding-top: 20px;">
+        <h2 style="font-size: 2.5rem; text-align: center; letter-spacing: 2px;">Functional Teams</h2>
+        <p style="text-align: center; color: #8b949e; max-width: 700px; margin: 0 auto; line-height: 1.6;">The specialized divisions driving our research, engineering, and operations.</p>
+        
+        <div class="grid-4">
+            <div class="feature-card" style="border-top-color: #ff007f;">
+                <h3 style="color: white; font-size: 1.1rem;">Finance, Data-Science & Applied Quantum-Mechanics</h3>
+                <p style="color: #8b949e; font-size: 0.9rem; line-height: 1.5;">Focuses on stochastic calculus, predictive modeling, and utilizing quantum simulators (IBM Qiskit) for complex financial problem sets.</p>
+            </div>
+            <div class="feature-card" style="border-top-color: #7000ff;">
+                <h3 style="color: white; font-size: 1.1rem;">Computational & AI/ML</h3>
+                <p style="color: #8b949e; font-size: 0.9rem; line-height: 1.5;">Dedicated to competitive programming, High-Performance Computing (C++), and engineering low-latency systems.</p>
+            </div>
+            <div class="feature-card" style="border-top-color: #00ffcc;">
+                <h3 style="color: white; font-size: 1.1rem;">Events & Logistics</h3>
+                <p style="color: #8b949e; font-size: 0.9rem; line-height: 1.5;">Manages end-to-end operations for technical workshops, handles publicity, and coordinates the flagship "Quant-Thon" event.</p>
+            </div>
+            <div class="feature-card" style="border-top-color: #f2a900;">
+                <h3 style="color: white; font-size: 1.1rem;">Outreach & Industry Relations</h3>
+                <p style="color: #8b949e; font-size: 0.9rem; line-height: 1.5;">Establishes professional networks with FinTech firms, engages alumni, and secures crucial placement and internship opportunities.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p style="letter-spacing: 1px;">QUANT∑ODE &copy; 2026 | MNIT's Premier Quantitative Initiative</p>
+    </footer>
+
+    <script>
+        // CMS Dynamic Name & Tag Fetcher (Keep this if it's on your people.html page)
+        if(window.location.pathname.includes('people.html')) {
+            fetch('/api/team').then(res => res.json()).then(data => {
+                for (const [roleId, info] of Object.entries(data)) {
+                    const nameEl = document.getElementById('name-' + roleId);
+                    const tagEl = document.getElementById('tag-' + roleId);
+                    if (nameEl && info.name) nameEl.innerText = info.name;
+                    if (tagEl && info.tag) tagEl.innerText = info.tag;
+                }
+            }).catch(e => console.log('CMS fetch skipped on non-team page.'));
+        }
+
+        // Smart Screen Detection
+        const isMobile = window.innerWidth <= 768;
+        
+        VANTA.NET({
+            el: "#webgl-background",
+            
+            // Stops the canvas from glitching when scrolling on mobile
+            mouseControls: !isMobile, 
+            touchControls: !isMobile, 
+            
+            gyroControls: false,
+            minHeight: 200.00,
+            minWidth: 200.00,
+            scale: 1.00,
+            scaleMobile: 1.00,
+            color: 0x00ffcc,
+            backgroundColor: 0x0d1117,
+            
+            // --- THE "MEDIUM ZONE" MATH ---
+            // points: Brought up to 8 (gives a solid structure without overcrowding)
+            points: isMobile ? 8.00 : 12.00,       
+            
+            // maxDistance: Reaches just far enough to make triangles, but not giant webs
+            maxDistance: isMobile ? 15.00 : 22.00, 
+            
+            // spacing: Keeps the clusters comfortably separated
+            spacing: isMobile ? 20.00 : 18.00,     
+            
+            showDots: true
+        });
+    </script>
+    </script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Quant∑ode | Secure Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar" style="position: fixed; top: 0; width: 100%; padding: 15px 50px; background: rgba(13, 17, 23, 0.9); backdrop-filter: blur(10px); display: flex; justify-content: space-between; align-items: center; z-index: 100; box-sizing: border-box; border-bottom: 1px solid #30363d;">
+        <a href="index.html" style="display: flex; align-items: center; gap: 15px; text-decoration: none;">
+            <img src="logo.jpg" alt="Quant∑ode Logo" class="nav-logo" style="height: 40px; width: 40px; border-radius: 50%;">
+            <h2 style="margin: 0; color: var(--quant-green); letter-spacing: 1px; font-size: 1.2rem;">Quant∑ode</h2>
+        </a>
+        <div class="nav-links" style="display: flex; align-items: center;">
+            <a href="index.html" style="color: var(--text-light); text-decoration: none; font-weight: bold; font-size: 0.9rem;">&larr; Return Home</a>
+        </div>
+    </nav>
+
+    <div class="login-wrapper">
+        <div class="bot-container" id="quant-bot">
+            <div class="bot-screen">
+                <div class="eyes-container" id="bot-eyes">
+                    <div class="glow-eye"></div>
+                    <div class="glow-eye"></div>
+                </div>
+                <div class="shutter" id="security-shutter"></div>
+            </div>
+        </div>
+
+        <div class="glass-panel">
+            <h2>Terminal Access</h2>
+            <input type="text" id="username" placeholder="System ID" autocomplete="off">
+            <input type="password" id="password" placeholder="Passcode">
+            <button onclick="login()">INITIALIZE</button>
+            <p id="error-msg" style="color: #ff4444; display: none; margin-top: 10px;">Access Denied.</p>
+        </div>
+    </div>
+
+    <script>
+        const bot = document.getElementById('quant-bot');
+        const userIn = document.getElementById('username');
+        const passIn = document.getElementById('password');
+
+        userIn.addEventListener('focus', () => bot.className = 'bot-container bot-peeking');
+        passIn.addEventListener('focus', () => bot.className = 'bot-container bot-locked');
+        userIn.addEventListener('blur', () => bot.className = 'bot-container');
+        passIn.addEventListener('blur', () => bot.className = 'bot-container');
+
+        async function login() {
+            const u = userIn.value;
+            const p = passIn.value;
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: u, password: p })
+            });
+            const data = await res.json();
+            
+            if (data.success) {
+                window.location.href = '/dashboard.html';
+            } else {
+                document.getElementById('error-msg').style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>

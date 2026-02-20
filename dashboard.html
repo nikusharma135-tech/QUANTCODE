@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>QUANT∑ODE | Secure Portal</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* CRITICAL UNIVERSAL FIX: Stops padding from stretching elements off-screen */
+        * { box-sizing: border-box; }
+        
+        body { padding: 0; background: var(--bg-dark); overflow-x: hidden; width: 100%; }
+        
+        .top-bar { padding: 20px 50px; background: rgba(0,0,0,0.8); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--quant-green); width: 100%; }
+        .dashboard-container { max-width: 1200px; margin: 40px auto; padding: 0 20px; width: 100%; }
+        
+        /* Glass Panel Constraints */
+        .glass-panel { background: rgba(22, 27, 34, 0.85); padding: 30px; border-radius: 10px; border: 1px solid #30363d; margin-bottom: 30px; width: 100%; }
+        
+        /* Table Optimization */
+        .table-wrapper { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid #30363d; border-radius: 5px; }
+        table { width: 100%; border-collapse: collapse; background: #000; min-width: 500px; /* Ensures columns don't crush into each other */ }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #30363d; white-space: nowrap; /* Prevents awkward text wrapping */ }
+        th { color: var(--quant-green); font-weight: bold; }
+        tr:hover { background: #161b22; }
+        
+        .btn-delete { background: #ff4444; color: white; padding: 5px 10px; width: auto; margin: 0; border-radius: 4px; border: none; cursor: pointer; }
+        .btn-delete:hover { background: #cc0000; }
+        
+        .material-list { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .material-item { display: flex; justify-content: space-between; align-items: center; background: #000; padding: 15px; border-left: 3px solid var(--quant-green); border-radius: 4px; }
+        .material-item a { color: var(--text-light); text-decoration: none; font-weight: bold; word-break: break-all; }
+        .material-item a:hover { color: var(--quant-green); }
+        
+        .badge { background: #30363d; padding: 3px 8px; border-radius: 12px; font-size: 0.8rem; }
+        .upload-box { background: #161b22; padding: 15px; border-radius: 5px; margin: 10px 0; border: 1px dashed #30363d; }
+        .upload-box label { color: var(--quant-green); font-weight: bold; display: block; margin-bottom: 10px; }
+
+        /* --- RESPONSIVE LAYOUT CLASSES --- */
+        .dashboard-grid { display: grid; gap: 30px; width: 100%; }
+        /* MIN-WIDTH 0 IS THE MAGIC GRID FIX */
+        .dashboard-grid > div { min-width: 0; width: 100%; } 
+        .admin-grid { grid-template-columns: 1fr 1fr; }
+        .member-grid { grid-template-columns: 2fr 1fr; }
+        .input-row { display: flex; gap: 10px; margin-bottom: 15px; width: 100%; }
+
+        /* --- MOBILE OPTIMIZATION --- */
+        @media screen and (max-width: 768px) {
+            .top-bar { flex-direction: column; padding: 20px 15px; gap: 15px; text-align: center; }
+            .top-bar div { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+            #welcome-text { margin: 0 !important; font-size: 0.9rem; }
+            .top-bar button { width: 100% !important; padding: 10px !important; }
+
+            .dashboard-container { margin: 20px auto; padding: 0 10px; }
+            .glass-panel { padding: 20px 15px; }
+            
+            .dashboard-grid { grid-template-columns: 1fr !important; gap: 20px; } 
+            
+            .input-row { flex-direction: column; gap: 10px; } 
+            .input-row input, .input-row select, .input-row button { width: 100% !important; margin: 0 !important; }
+            
+            .material-item { flex-direction: column; align-items: flex-start; gap: 10px; padding: 12px; }
+            .material-item .badge { align-self: flex-start; }
+            
+            h2 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <h2 style="margin: 0; color: var(--quant-green);">QUANT∑ODE <span id="user-role-badge" style="color: white; font-size: 14px; margin-left: 10px;"></span></h2>
+        <div>
+            <span id="welcome-text" style="margin-right: 20px; color: #8b949e;"></span>
+            <button style="width: auto; margin: 0; padding: 5px 15px;" onclick="logout()">Disconnect</button>
+        </div>
+    </div>
+
+    <div class="dashboard-container" id="dashboard-content">
+        <p style="text-align: center; color: var(--quant-green);">Authenticating Connection...</p>
+    </div>
+
+    <script>
+        async function initDashboard() {
+            const res = await fetch('/api/dashboard-data');
+            const data = await res.json();
+            if (!data.loggedIn) return window.location.href = '/login.html';
+
+            document.getElementById('user-role-badge').innerText = `[${data.role.toUpperCase()}]`;
+            document.getElementById('welcome-text').innerText = `Logged in as: ${data.username}`;
+            const container = document.getElementById('dashboard-content');
+            
+            if (data.role === 'admin' || data.role === 'superadmin') renderAdminDashboard(container, data);
+            else renderMemberDashboard(container, data);
+        }
+
+        function renderAdminDashboard(container, data) {
+            const userRows = data.users.map(u => `
+                <tr>
+                    <td>${u.username}</td>
+                    <td style="letter-spacing: ${data.role === 'superadmin' ? 'normal' : '2px'}; color: ${data.role === 'superadmin' ? 'var(--text-light)' : '#8b949e'};">
+                        ${data.role === 'superadmin' ? u.password : '••••••••'}
+                    </td>
+                    <td><span class="badge" style="background: ${u.role === 'superadmin' ? '#ff007f' : (u.role === 'admin' ? '#7000ff' : '#30363d')}">${u.role}</span></td>
+                    <td>${u.createdAt.split(',')[0]}</td>
+                    <td>${(data.role === 'superadmin' && u.username !== data.username) ? `<button class="btn-delete" onclick="deleteUser('${u.username}')">Delete</button>` : '<span style="color: #8b949e; font-size: 0.9em;">Restricted</span>'}</td>
+                </tr>
+            `).join('');
+
+            const roleSelector = data.role === 'superadmin' ? `<select id="new-role" style="margin: 0; padding: 10px; background: #000; border: 1px solid #30363d; color: var(--quant-green); font-family: inherit;"><option value="member">Member</option><option value="admin">Admin</option></select>` : `<input type="hidden" id="new-role" value="member">`;
+
+            const superAdminPhotoPanel = data.role === 'superadmin' ? `
+                <div class="glass-panel" style="margin-top: 30px; border-top-color: #00aaff;">
+                    <h2>Team Roster Manager</h2>
+                    <p style="color: #8b949e; font-size: 0.9rem; margin-bottom: 15px;">Update profiles, names, and tags. (Supreme Admin Only)</p>
+                    
+                    <label style="color: var(--quant-green); font-size: 0.85rem; font-weight: bold;">Select Role to Edit:</label>
+                    <select id="team-role" style="width: 100%; padding: 10px; margin-bottom: 15px; background: #000; border: 1px solid #30363d; color: var(--quant-green); font-family: inherit;">
+                        <option value="president">President</option>
+                        <option value="advisor">Advisor to President</option>
+                        <option value="treasurer">Treasurer</option>
+                        <option value="faculty1">Faculty In-Charge 1</option>
+                        <option value="faculty2">Faculty In-Charge 2</option>
+                        <option value="vp1">Vice President 1</option>
+                        <option value="vp2">Vice President 2</option>
+                        <option value="gensec1">General Secretary 1</option>
+                        <option value="gensec2">General Secretary 2</option>
+                        <option value="js_finance">Joint Sec. (Finance & Data)</option>
+                        <option value="js_quantum">Joint Sec. (Quantum Comp)</option>
+                        <option value="js_aiml">Joint Sec. (AI/ML)</option>
+                        <option value="js_logistics">Joint Sec. (Logistics)</option>
+                        <option value="js_event">Joint Sec. (Event)</option>
+                        <option value="js_outreach">Joint Sec. (Outreach)</option>
+                        <option value="adj_bhu">Adjunct Sec. (IIT BHU)</option>
+                        <option value="adj_iiit">Adjunct Sec. (IIIT Allahabad)</option>
+                        <option value="adj_dtu">Adjunct Sec. (DTU)</option>
+                        <option value="adj_vnit">Adjunct Sec. (VNIT)</option>
+                        <option value="exec_logistics">Executive (Logistics)</option>
+                        <option value="exec_design1">Executive (Design & Media 1)</option>
+                        <option value="exec_design2">Executive (Design & Media 2)</option>
+                        <option value="exec_outreach">Executive (Outreach)</option>
+                        <option value="exec_finance">Executive (Finance & Data)</option>
+                        <option value="exec_quantum">Executive (Quantum Comp)</option>
+                        <option value="exec_aiml">Executive (AI/ML)</option>
+                    </select>
+
+                    <label style="color: var(--quant-green); font-size: 0.85rem; font-weight: bold;">New Name (Leave blank to keep current):</label>
+                    <input type="text" id="team-name" placeholder="E.g. Shreyash Sharma">
+                    
+                    <label style="color: var(--quant-green); font-size: 0.85rem; font-weight: bold;">College / Branch Tag (Optional):</label>
+                    <input type="text" id="team-tag" placeholder="E.g. B.TECH CSE">
+
+                    <div class="upload-box" style="margin-top: 15px;">
+                        <label>Update Profile Image (Optional)</label>
+                        <input type="file" id="team-photo" accept="image/*" style="background: transparent; border: none; padding: 0;">
+                    </div>
+                    <button id="update-team-btn" onclick="updateTeamMember()">Update Live Database</button>
+                </div>
+            ` : '';
+
+            container.innerHTML = `
+                <div class="dashboard-grid admin-grid">
+                    <div>
+                        <div class="glass-panel">
+                            <h2>User Registry</h2>
+                            <div class="input-row">
+                                <input type="text" id="new-user" placeholder="Username" style="margin: 0;">
+                                <input type="text" id="new-pass" placeholder="Password" style="margin: 0;">
+                                ${roleSelector}
+                                <button onclick="addUser()">Add</button>
+                            </div>
+                            <div class="table-wrapper">
+                                <table><tr><th>Username</th><th>Password</th><th>Role</th><th>Date</th><th>Action</th></tr>${userRows}</table>
+                            </div>
+                        </div>
+                        <div class="glass-panel">
+                            <h2>Broadcast Alert</h2>
+                            <input type="text" id="new-notif" placeholder="Enter message to all members...">
+                            <button onclick="postNotification()">Send Alert</button>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="glass-panel">
+                            <h2>Resource Deployment</h2>
+                            <input type="text" id="mat-title" placeholder="Resource Title">
+                            <select id="mat-type" style="width: 100%; padding: 10px; margin: 10px 0; background: #000; border: 1px solid #30363d; color: var(--quant-green); font-family: inherit;">
+                                <option value="pdf">PDF Document</option><option value="video">Video Lecture</option>
+                            </select>
+                            <div class="upload-box"><label>Option A: File Upload</label><input type="file" id="mat-file" accept=".pdf,video/*" style="background: transparent; border: none; padding: 0;"></div>
+                            <div style="text-align: center; color: #8b949e; margin: 5px 0;">-- OR --</div>
+                            <div class="upload-box"><label>Option B: External URL</label><input type="text" id="mat-link" placeholder="YouTube or Drive Link"></div>
+                            <button id="deploy-btn" onclick="addMaterial()">Deploy Resource</button>
+                        </div>
+                        ${superAdminPhotoPanel}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderMemberDashboard(container, data) {
+            const pdfs = data.materials.filter(m => m.type === 'pdf');
+            const videos = data.materials.filter(m => m.type === 'video');
+            container.innerHTML = `
+                <div class="dashboard-grid member-grid">
+                    <div>
+                        <div class="glass-panel">
+                            <h2>Video Lectures</h2>
+                            <div class="material-list">${videos.length ? videos.map(v => `<div class="material-item"><a href="${v.link}" target="_blank">▶ ${v.title}</a><span class="badge">${v.date.split(',')[0]}</span></div>`).join('') : '<p style="color: #8b949e;">No videos available yet.</p>'}</div>
+                        </div>
+                        <div class="glass-panel">
+                            <h2>PDF Resources & Models</h2>
+                            <div class="material-list">${pdfs.length ? pdfs.map(p => `<div class="material-item"><a href="${p.link}" target="_blank">📄 ${p.title}</a><span class="badge">${p.date.split(',')[0]}</span></div>`).join('') : '<p style="color: #8b949e;">No PDFs available yet.</p>'}</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="glass-panel">
+                            <h2>Live Alerts</h2>
+                            ${data.notifications.map(n => `<div style="border-left: 2px solid var(--quant-green); padding-left: 10px; margin-bottom: 20px;"><small style="color: #8b949e;">${n.date}</small><p style="margin: 5px 0;">${n.text}</p></div>`).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- ACTION FUNCTIONS ---
+        async function addUser() {
+            const u = document.getElementById('new-user').value, p = document.getElementById('new-pass').value, r = document.getElementById('new-role').value;
+            if(!u || !p) return;
+            await fetch('/api/admin/add-user', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ newUsername: u, newPassword: p, newRole: r }) });
+            initDashboard();
+        }
+        async function deleteUser(username) {
+            if(confirm(`Permanently delete: ${username}?`)) { await fetch(`/api/admin/delete-user/${username}`, { method: 'DELETE' }); initDashboard(); }
+        }
+        async function addMaterial() {
+            const formData = new FormData();
+            formData.append('title', document.getElementById('mat-title').value);
+            formData.append('type', document.getElementById('mat-type').value);
+            const fileInput = document.getElementById('mat-file');
+            if (fileInput.files.length > 0) formData.append('file', fileInput.files[0]);
+            else formData.append('link', document.getElementById('mat-link').value);
+            document.getElementById('deploy-btn').innerText = "Uploading..."; document.getElementById('deploy-btn').disabled = true;
+            await fetch('/api/admin/add-material', { method: 'POST', body: formData });
+            initDashboard();
+        }
+        async function postNotification() {
+            const text = document.getElementById('new-notif').value;
+            if(!text) return;
+            await fetch('/api/admin/notify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
+            initDashboard();
+        }
+        
+        async function updateTeamMember() {
+            const formData = new FormData();
+            formData.append('roleId', document.getElementById('team-role').value);
+            formData.append('memberName', document.getElementById('team-name').value);
+            formData.append('memberTag', document.getElementById('team-tag').value);
+            
+            const fileInput = document.getElementById('team-photo');
+            if (fileInput.files.length > 0) formData.append('photo', fileInput.files[0]);
+
+            const btn = document.getElementById('update-team-btn');
+            btn.innerText = "Encrypting and Uploading..."; btn.disabled = true;
+
+            const res = await fetch('/api/superadmin/update-team-member', { method: 'POST', body: formData });
+            const result = await res.json();
+            
+            if (result.success) {
+                alert("Database Updated! \nRefresh the Team page to see the changes.");
+                document.getElementById('team-name').value = '';
+                document.getElementById('team-tag').value = '';
+                fileInput.value = '';
+            } else {
+                alert("Update Sequence Failed.");
+            }
+            btn.innerText = "Update Live Database"; btn.disabled = false;
+        }
+
+        async function logout() { await fetch('/api/logout', { method: 'POST' }); window.location.href = '/login.html'; }
+        initDashboard();
+    </script>
+</body>
+</html>
