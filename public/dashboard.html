@@ -83,6 +83,11 @@
             </form>
 
             <div id="superadmin-controls" style="display: none; margin-top: 30px; padding-top: 20px; border-top: 1px solid #30363d;">
+                <h3 style="color: #ff007f; margin-bottom: 20px;">Supreme Admin: Network Personnel</h3>
+                
+                <ul id="users-list" style="list-style: none; padding: 0; margin-bottom: 30px; background: rgba(0,0,0,0.5); border-radius: 4px; border: 1px solid #30363d; padding: 15px;">
+                    </ul>
+
                 <h3 style="color: #ff007f;">Supreme Admin: Add User</h3>
                 <input type="text" id="new-username" placeholder="New Username">
                 <input type="password" id="new-password" placeholder="Password">
@@ -129,8 +134,26 @@
             if (data.role === 'admin' || data.role === 'superadmin') {
                 document.getElementById('admin-panel').style.display = 'block';
             }
+            
+            // SUPER ADMIN LOGIC: Render User List
             if (data.role === 'superadmin') {
                 document.getElementById('superadmin-controls').style.display = 'block';
+                
+                const usersList = document.getElementById('users-list');
+                usersList.innerHTML = '';
+                if(data.users) {
+                    data.users.forEach(u => {
+                        const deleteBtn = u.username !== 'shreyash_251120' 
+                            ? `<button onclick="deleteUser('${u.username}')" style="width: auto; padding: 4px 10px; background: transparent; border: 1px solid #ff4444; color: #ff4444; font-size: 0.8rem; margin: 0;">Terminate</button>`
+                            : `<span style="color: #8b949e; font-size: 0.8rem;">[SYSTEM CORE]</span>`;
+                            
+                        usersList.innerHTML += `
+                        <li style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px dashed #30363d;">
+                            <span style="color: white;">[${u.role.toUpperCase()}] <span style="color: var(--quant-green);">${u.username}</span></span>
+                            ${deleteBtn}
+                        </li>`;
+                    });
+                }
             }
 
             const matList = document.getElementById('materials-list');
@@ -176,6 +199,24 @@
             });
             alert('New Terminal User Provisioned!');
             window.location.reload();
+        }
+
+        // DELETE USER LOGIC
+        async function deleteUser(username) {
+            if(!confirm(`WARNING: Are you sure you want to permanently terminate access for user: ${username}?`)) return;
+            
+            try {
+                const res = await fetch(`/api/admin/delete-user/${username}`, { method: 'DELETE' });
+                const result = await res.json();
+                
+                if(result.success) {
+                    window.location.reload();
+                } else {
+                    alert('Error: Could not terminate user.');
+                }
+            } catch(e) {
+                console.error("Deletion failed", e);
+            }
         }
 
         async function logout() {
