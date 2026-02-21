@@ -3,270 +3,284 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QUANT∑ODE | Terminal Dashboard</title>
+    <title>QUANT∑ODE | Secure Portal</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
     <style>
-        body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; background: var(--bg-dark); color: var(--text-light); font-family: monospace; }
-        .navbar { position: fixed; top: 0; width: 100%; padding: 15px 50px; background: rgba(13, 17, 23, 0.8); backdrop-filter: blur(15px); display: flex; justify-content: space-between; align-items: center; z-index: 100; box-sizing: border-box; border-bottom: 1px solid rgba(48, 54, 61, 0.5); }
-        .nav-links { display: flex; align-items: center; }
-        .nav-links a { color: var(--text-light); text-decoration: none; margin-left: 30px; font-weight: bold; transition: color 0.3s; text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem;}
-        .nav-links a:hover { color: var(--quant-green); }
+        /* CRITICAL UNIVERSAL FIX: Stops padding from stretching elements off-screen */
+        * { box-sizing: border-box; }
         
-        .dashboard-container { max-width: 900px; margin: 120px auto 50px; padding: 20px; width: 100%; flex: 1; z-index: 1; box-sizing: border-box; }
-        .glass-panel { background: rgba(22, 27, 34, 0.85); padding: 30px; border-radius: 8px; border: 1px solid #30363d; margin-bottom: 25px; backdrop-filter: blur(5px); }
+        body { padding: 0; background: var(--bg-dark); overflow-x: hidden; width: 100%; }
         
-        h1, h2, h3 { color: white; margin-top: 0; letter-spacing: 1px; }
-        .admin-section { display: none; } 
+        .top-bar { padding: 20px 50px; background: rgba(0,0,0,0.8); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--quant-green); width: 100%; }
+        .dashboard-container { max-width: 1200px; margin: 40px auto; padding: 0 20px; width: 100%; }
         
-        input, select, button { width: 100%; padding: 12px; margin-bottom: 15px; background: #000; color: var(--quant-green); border: 1px solid #30363d; border-radius: 4px; box-sizing: border-box; font-family: inherit; }
-        input:focus, select:focus { outline: none; border-color: var(--quant-green); }
-        button { background: var(--quant-green); color: #000; font-weight: bold; cursor: pointer; text-transform: uppercase; border: none; }
-        button:hover { background: #00ccaa; }
+        /* Glass Panel Constraints */
+        .glass-panel { background: rgba(22, 27, 34, 0.85); padding: 30px; border-radius: 10px; border: 1px solid #30363d; margin-bottom: 30px; width: 100%; }
         
-        #webgl-background { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; }
-        footer { text-align: center; padding: 30px; background: #000; color: #8b949e; border-top: 1px solid #30363d; width: 100%; margin-top: auto; box-sizing: border-box; }
+        /* Table Optimization */
+        .table-wrapper { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid #30363d; border-radius: 5px; }
+        table { width: 100%; border-collapse: collapse; background: #000; min-width: 500px; /* Ensures columns don't crush into each other */ }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #30363d; white-space: nowrap; /* Prevents awkward text wrapping */ }
+        th { color: var(--quant-green); font-weight: bold; }
+        tr:hover { background: #161b22; }
         
+        .btn-delete { background: #ff4444; color: white; padding: 5px 10px; width: auto; margin: 0; border-radius: 4px; border: none; cursor: pointer; }
+        .btn-delete:hover { background: #cc0000; }
+        
+        .material-list { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .material-item { display: flex; justify-content: space-between; align-items: center; background: #000; padding: 15px; border-left: 3px solid var(--quant-green); border-radius: 4px; }
+        .material-item a { color: var(--text-light); text-decoration: none; font-weight: bold; word-break: break-all; }
+        .material-item a:hover { color: var(--quant-green); }
+        
+        .badge { background: #30363d; padding: 3px 8px; border-radius: 12px; font-size: 0.8rem; }
+        .upload-box { background: #161b22; padding: 15px; border-radius: 5px; margin: 10px 0; border: 1px dashed #30363d; }
+        .upload-box label { color: var(--quant-green); font-weight: bold; display: block; margin-bottom: 10px; }
+
+        /* --- RESPONSIVE LAYOUT CLASSES --- */
+        .dashboard-grid { display: grid; gap: 30px; width: 100%; }
+        /* MIN-WIDTH 0 IS THE MAGIC GRID FIX */
+        .dashboard-grid > div { min-width: 0; width: 100%; } 
+        .admin-grid { grid-template-columns: 1fr 1fr; }
+        .member-grid { grid-template-columns: 2fr 1fr; }
+        .input-row { display: flex; gap: 10px; margin-bottom: 15px; width: 100%; }
+
+        /* --- MOBILE OPTIMIZATION --- */
         @media screen and (max-width: 768px) {
-            .navbar { padding: 15px 20px; flex-direction: column; gap: 15px; }
-            .nav-links { flex-wrap: wrap; justify-content: center; gap: 15px; }
-            .nav-links a { margin-left: 0; }
-            .dashboard-container { margin-top: 140px; }
+            .top-bar { flex-direction: column; padding: 20px 15px; gap: 15px; text-align: center; }
+            .top-bar div { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+            #welcome-text { margin: 0 !important; font-size: 0.9rem; }
+            .top-bar button { width: 100% !important; padding: 10px !important; }
+
+            .dashboard-container { margin: 20px auto; padding: 0 10px; }
+            .glass-panel { padding: 20px 15px; }
+            
+            .dashboard-grid { grid-template-columns: 1fr !important; gap: 20px; } 
+            
+            .input-row { flex-direction: column; gap: 10px; } 
+            .input-row input, .input-row select, .input-row button { width: 100% !important; margin: 0 !important; }
+            
+            .material-item { flex-direction: column; align-items: flex-start; gap: 10px; padding: 12px; }
+            .material-item .badge { align-self: flex-start; }
+            
+            h2 { font-size: 1.5rem; }
         }
     </style>
 </head>
 <body>
-    <div id="webgl-background"></div>
-    
-    <nav class="navbar">
-        <a href="index.html" style="display: flex; align-items: center; gap: 15px; text-decoration: none;">
-            <img src="logo.jpg" alt="Logo" style="height: 40px; width: 40px; border-radius: 50%;">
-            <h2 style="margin: 0; color: var(--quant-green); letter-spacing: 2px; font-size: 1.2rem;">QUANT∑ODE</h2>
-        </a>
-        <div class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="achievements.html">Our Work</a>
-            <a href="notifications.html">Alerts</a>
-            <a href="people.html">Team</a>
-            <button onclick="logout()" style="width: auto; padding: 8px 15px; margin: 0 0 0 15px; background: transparent; color: #ff4444; border: 1px solid #ff4444;">LOGOUT</button>
-        </div>
-    </nav>
-
-    <div class="dashboard-container">
-        <h1>Terminal Dashboard_</h1>
-        <p id="welcome-msg" style="color: var(--quant-green); font-weight: bold; margin-bottom: 30px;"></p>
-
-        <div class="glass-panel">
-            <h2>Shared Resources_</h2>
-            <ul id="materials-list" style="list-style: none; padding: 0;"></ul>
-        </div>
-
-        <div id="admin-panel" class="admin-section glass-panel" style="border-top: 2px solid #ff007f;">
-            <h2 style="color: #ff007f;">Command Panel_</h2>
-            
-            <h3 style="margin-top: 20px; font-size: 1rem;">Deploy Broadcast Alert</h3>
-            <input type="text" id="alert-text" placeholder="Enter system alert...">
-            <button onclick="postAlert()">Broadcast Alert</button>
-
-            <h3 style="margin-top: 30px; font-size: 1rem;">Upload Material</h3>
-            <form id="material-form">
-                <input type="text" id="mat-title" placeholder="Title (e.g., Intro to Options)" required>
-                <select id="mat-type" required>
-                    <option value="PDF">PDF</option>
-                    <option value="LINK">Link</option>
-                    <option value="VIDEO">Video</option>
-                </select>
-                <input type="text" id="mat-link" placeholder="URL Link">
-                <input type="file" id="mat-file" style="color: white;">
-                <button type="submit">Upload Material</button>
-            </form>
-
-            <div id="superadmin-controls" style="display: none; margin-top: 30px; padding-top: 20px; border-top: 1px solid #30363d;">
-                <h3 style="color: #ff007f; margin-bottom: 20px;">Supreme Admin: Network Personnel</h3>
-                
-                <ul id="users-list" style="list-style: none; padding: 0; margin-bottom: 30px; background: rgba(0,0,0,0.5); border-radius: 4px; border: 1px solid #30363d; padding: 15px;">
-                    </ul>
-
-                <h3 style="color: #ff007f;">Supreme Admin: Add User</h3>
-                <input type="text" id="new-username" placeholder="New Username">
-                <input type="password" id="new-password" placeholder="Password">
-                <select id="new-role">
-                    <option value="member">Member</option>
-                    <option value="admin">Admin</option>
-                </select>
-                <button onclick="addUser()">Create User</button>
-            </div>
-        </div>
-
-        <div class="glass-panel" style="border-top: 2px solid #7000ff;">
-            <h2>Ask the Quant Agent_</h2>
-            <input type="text" id="ai-query" placeholder="e.g. What is algorithmic trading?">
-            <button onclick="askGeminiDirectly()" style="background: #7000ff; color: white;">Initialize Scan</button>
-            <div id="ai-response" style="margin-top: 15px; white-space: pre-wrap;"></div>
+    <div class="top-bar">
+        <h2 style="margin: 0; color: var(--quant-green);">QUANT∑ODE <span id="user-role-badge" style="color: white; font-size: 14px; margin-left: 10px;"></span></h2>
+        <div>
+            <span id="welcome-text" style="margin-right: 20px; color: #8b949e;"></span>
+            <button style="width: auto; margin: 0; padding: 5px 15px;" onclick="logout()">Disconnect</button>
         </div>
     </div>
 
-    <footer>
-        <p style="letter-spacing: 1px;">QUANT∑ODE &copy; 2026 | MNIT's Premier Quantitative Initiative</p>
-    </footer>
+    <div class="dashboard-container" id="dashboard-content">
+        <p style="text-align: center; color: var(--quant-green);">Authenticating Connection...</p>
+    </div>
 
     <script>
-        // Vanta JS Background
-        const isMobile = window.innerWidth <= 768;
-        VANTA.NET({
-            el: "#webgl-background",
-            mouseControls: !isMobile, touchControls: !isMobile, gyroControls: false,
-            minHeight: 200.00, minWidth: 200.00, scale: 1.00, scaleMobile: 1.00,
-            color: 0x00ffcc, backgroundColor: 0x0d1117, points: isMobile ? 8.00 : 12.00, 
-            maxDistance: isMobile ? 15.00 : 22.00, spacing: isMobile ? 20.00 : 18.00, showDots: true
-        });
-
-        // Dashboard Core Logic
-        async function loadDashboard() {
+        async function initDashboard() {
             const res = await fetch('/api/dashboard-data');
             const data = await res.json();
+            if (!data.loggedIn) return window.location.href = '/login.html';
+
+            document.getElementById('user-role-badge').innerText = `[${data.role.toUpperCase()}]`;
+            document.getElementById('welcome-text').innerText = `Logged in as: ${data.username}`;
+            const container = document.getElementById('dashboard-content');
             
-            if (!data.loggedIn) return window.location.href = 'login.html';
-
-            document.getElementById('welcome-msg').innerText = `> USER_ID: [${data.username}] | CLEARANCE_LEVEL: [${data.role.toUpperCase()}]`;
-
-            if (data.role === 'admin' || data.role === 'superadmin') {
-                document.getElementById('admin-panel').style.display = 'block';
-            }
-            
-            // SUPER ADMIN LOGIC: Render User List
-            if (data.role === 'superadmin') {
-                document.getElementById('superadmin-controls').style.display = 'block';
-                
-                const usersList = document.getElementById('users-list');
-                usersList.innerHTML = '';
-                if(data.users) {
-                    data.users.forEach(u => {
-                        const deleteBtn = u.username !== 'shreyash_251120' 
-                            ? `<button onclick="deleteUser('${u.username}')" style="width: auto; padding: 4px 10px; background: transparent; border: 1px solid #ff4444; color: #ff4444; font-size: 0.8rem; margin: 0;">Terminate</button>`
-                            : `<span style="color: #8b949e; font-size: 0.8rem;">[SYSTEM CORE]</span>`;
-                            
-                        usersList.innerHTML += `
-                        <li style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px dashed #30363d;">
-                            <span style="color: white;">[${u.role.toUpperCase()}] <span style="color: var(--quant-green);">${u.username}</span></span>
-                            ${deleteBtn}
-                        </li>`;
-                    });
-                }
-            }
-
-            const matList = document.getElementById('materials-list');
-            matList.innerHTML = '';
-            if(data.materials) {
-                data.materials.forEach(m => {
-                    matList.innerHTML += `<li style="margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #30363d;"><a href="${m.link}" target="_blank" style="color: var(--quant-green); text-decoration: none; font-weight: bold;">[ ${m.type} ] ${m.title}</a></li>`;
-                });
-            }
+            if (data.role === 'admin' || data.role === 'superadmin') renderAdminDashboard(container, data);
+            else renderMemberDashboard(container, data);
         }
 
-        // Admin Functions
-        document.getElementById('material-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
+        function renderAdminDashboard(container, data) {
+            const userRows = data.users.map(u => `
+                <tr>
+                    <td>${u.username}</td>
+                    <td style="letter-spacing: ${data.role === 'superadmin' ? 'normal' : '2px'}; color: ${data.role === 'superadmin' ? 'var(--text-light)' : '#8b949e'};">
+                        ${data.role === 'superadmin' ? u.password : '••••••••'}
+                    </td>
+                    <td><span class="badge" style="background: ${u.role === 'superadmin' ? '#ff007f' : (u.role === 'admin' ? '#7000ff' : '#30363d')}">${u.role}</span></td>
+                    <td>${u.createdAt.split(',')[0]}</td>
+                    <td>${(data.role === 'superadmin' && u.username !== data.username) ? `<button class="btn-delete" onclick="deleteUser('${u.username}')">Delete</button>` : '<span style="color: #8b949e; font-size: 0.9em;">Restricted</span>'}</td>
+                </tr>
+            `).join('');
+
+            const roleSelector = data.role === 'superadmin' ? `<select id="new-role" style="margin: 0; padding: 10px; background: #000; border: 1px solid #30363d; color: var(--quant-green); font-family: inherit;"><option value="member">Member</option><option value="admin">Admin</option></select>` : `<input type="hidden" id="new-role" value="member">`;
+
+            const superAdminPhotoPanel = data.role === 'superadmin' ? `
+                <div class="glass-panel" style="margin-top: 30px; border-top-color: #00aaff;">
+                    <h2>Team Roster Manager</h2>
+                    <p style="color: #8b949e; font-size: 0.9rem; margin-bottom: 15px;">Update profiles, names, and tags. (Supreme Admin Only)</p>
+                    
+                    <label style="color: var(--quant-green); font-size: 0.85rem; font-weight: bold;">Select Role to Edit:</label>
+                    <select id="team-role" style="width: 100%; padding: 10px; margin-bottom: 15px; background: #000; border: 1px solid #30363d; color: var(--quant-green); font-family: inherit;">
+                        <option value="president">President</option>
+                        <option value="advisor">Advisor to President</option>
+                        <option value="treasurer">Treasurer</option>
+                        <option value="faculty1">Faculty In-Charge 1</option>
+                        <option value="faculty2">Faculty In-Charge 2</option>
+                        <option value="vp1">Vice President 1</option>
+                        <option value="vp2">Vice President 2</option>
+                        <option value="gensec1">General Secretary 1</option>
+                        <option value="gensec2">General Secretary 2</option>
+                        <option value="js_finance">Joint Sec. (Finance & Data)</option>
+                        <option value="js_quantum">Joint Sec. (Quantum Comp)</option>
+                        <option value="js_aiml">Joint Sec. (AI/ML)</option>
+                        <option value="js_logistics">Joint Sec. (Logistics)</option>
+                        <option value="js_event">Joint Sec. (Event)</option>
+                        <option value="js_outreach">Joint Sec. (Outreach)</option>
+                        <option value="adj_bhu">Adjunct Sec. (IIT BHU)</option>
+                        <option value="adj_iiit">Adjunct Sec. (IIIT Allahabad)</option>
+                        <option value="adj_dtu">Adjunct Sec. (DTU)</option>
+                        <option value="adj_vnit">Adjunct Sec. (VNIT)</option>
+                        <option value="exec_logistics">Executive (Logistics)</option>
+                        <option value="exec_design1">Executive (Design & Media 1)</option>
+                        <option value="exec_design2">Executive (Design & Media 2)</option>
+                        <option value="exec_outreach">Executive (Outreach)</option>
+                        <option value="exec_finance">Executive (Finance & Data)</option>
+                        <option value="exec_quantum">Executive (Quantum Comp)</option>
+                        <option value="exec_aiml">Executive (AI/ML)</option>
+                    </select>
+
+                    <label style="color: var(--quant-green); font-size: 0.85rem; font-weight: bold;">New Name (Leave blank to keep current):</label>
+                    <input type="text" id="team-name" placeholder="E.g. Shreyash Sharma">
+                    
+                    <label style="color: var(--quant-green); font-size: 0.85rem; font-weight: bold;">College / Branch Tag (Optional):</label>
+                    <input type="text" id="team-tag" placeholder="E.g. B.TECH CSE">
+
+                    <div class="upload-box" style="margin-top: 15px;">
+                        <label>Update Profile Image (Optional)</label>
+                        <input type="file" id="team-photo" accept="image/*" style="background: transparent; border: none; padding: 0;">
+                    </div>
+                    <button id="update-team-btn" onclick="updateTeamMember()">Update Live Database</button>
+                </div>
+            ` : '';
+
+            container.innerHTML = `
+                <div class="dashboard-grid admin-grid">
+                    <div>
+                        <div class="glass-panel">
+                            <h2>User Registry</h2>
+                            <div class="input-row">
+                                <input type="text" id="new-user" placeholder="Username" style="margin: 0;">
+                                <input type="text" id="new-pass" placeholder="Password" style="margin: 0;">
+                                ${roleSelector}
+                                <button onclick="addUser()">Add</button>
+                            </div>
+                            <div class="table-wrapper">
+                                <table><tr><th>Username</th><th>Password</th><th>Role</th><th>Date</th><th>Action</th></tr>${userRows}</table>
+                            </div>
+                        </div>
+                        <div class="glass-panel">
+                            <h2>Broadcast Alert</h2>
+                            <input type="text" id="new-notif" placeholder="Enter message to all members...">
+                            <button onclick="postNotification()">Send Alert</button>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="glass-panel">
+                            <h2>Resource Deployment</h2>
+                            <input type="text" id="mat-title" placeholder="Resource Title">
+                            <select id="mat-type" style="width: 100%; padding: 10px; margin: 10px 0; background: #000; border: 1px solid #30363d; color: var(--quant-green); font-family: inherit;">
+                                <option value="pdf">PDF Document</option><option value="video">Video Lecture</option>
+                            </select>
+                            <div class="upload-box"><label>Option A: File Upload</label><input type="file" id="mat-file" accept=".pdf,video/*" style="background: transparent; border: none; padding: 0;"></div>
+                            <div style="text-align: center; color: #8b949e; margin: 5px 0;">-- OR --</div>
+                            <div class="upload-box"><label>Option B: External URL</label><input type="text" id="mat-link" placeholder="YouTube or Drive Link"></div>
+                            <button id="deploy-btn" onclick="addMaterial()">Deploy Resource</button>
+                        </div>
+                        ${superAdminPhotoPanel}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderMemberDashboard(container, data) {
+            const pdfs = data.materials.filter(m => m.type === 'pdf');
+            const videos = data.materials.filter(m => m.type === 'video');
+            container.innerHTML = `
+                <div class="dashboard-grid member-grid">
+                    <div>
+                        <div class="glass-panel">
+                            <h2>Video Lectures</h2>
+                            <div class="material-list">${videos.length ? videos.map(v => `<div class="material-item"><a href="${v.link}" target="_blank">▶ ${v.title}</a><span class="badge">${v.date.split(',')[0]}</span></div>`).join('') : '<p style="color: #8b949e;">No videos available yet.</p>'}</div>
+                        </div>
+                        <div class="glass-panel">
+                            <h2>PDF Resources & Models</h2>
+                            <div class="material-list">${pdfs.length ? pdfs.map(p => `<div class="material-item"><a href="${p.link}" target="_blank">📄 ${p.title}</a><span class="badge">${p.date.split(',')[0]}</span></div>`).join('') : '<p style="color: #8b949e;">No PDFs available yet.</p>'}</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="glass-panel">
+                            <h2>Live Alerts</h2>
+                            ${data.notifications.map(n => `<div style="border-left: 2px solid var(--quant-green); padding-left: 10px; margin-bottom: 20px;"><small style="color: #8b949e;">${n.date}</small><p style="margin: 5px 0;">${n.text}</p></div>`).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- ACTION FUNCTIONS ---
+        async function addUser() {
+            const u = document.getElementById('new-user').value, p = document.getElementById('new-pass').value, r = document.getElementById('new-role').value;
+            if(!u || !p) return;
+            await fetch('/api/admin/add-user', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ newUsername: u, newPassword: p, newRole: r }) });
+            initDashboard();
+        }
+        async function deleteUser(username) {
+            if(confirm(`Permanently delete: ${username}?`)) { await fetch(`/api/admin/delete-user/${username}`, { method: 'DELETE' }); initDashboard(); }
+        }
+        async function addMaterial() {
             const formData = new FormData();
             formData.append('title', document.getElementById('mat-title').value);
             formData.append('type', document.getElementById('mat-type').value);
-            formData.append('link', document.getElementById('mat-link').value);
-            if(document.getElementById('mat-file').files[0]) {
-                formData.append('file', document.getElementById('mat-file').files[0]);
-            }
+            const fileInput = document.getElementById('mat-file');
+            if (fileInput.files.length > 0) formData.append('file', fileInput.files[0]);
+            else formData.append('link', document.getElementById('mat-link').value);
+            document.getElementById('deploy-btn').innerText = "Uploading..."; document.getElementById('deploy-btn').disabled = true;
             await fetch('/api/admin/add-material', { method: 'POST', body: formData });
-            alert('Material added!');
-            window.location.reload();
-        });
-
-        async function postAlert() {
-            const text = document.getElementById('alert-text').value;
-            await fetch('/api/admin/notify', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text })
-            });
-            alert('System Alert Deployed!');
-            document.getElementById('alert-text').value = '';
+            initDashboard();
         }
-
-        async function addUser() {
-            const newUsername = document.getElementById('new-username').value;
-            const newPassword = document.getElementById('new-password').value;
-            const newRole = document.getElementById('new-role').value;
-            await fetch('/api/admin/add-user', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' }, 
-                body: JSON.stringify({ newUsername, newPassword, newRole })
-            });
-            alert('New Terminal User Provisioned!');
-            window.location.reload();
+        async function postNotification() {
+            const text = document.getElementById('new-notif').value;
+            if(!text) return;
+            await fetch('/api/admin/notify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
+            initDashboard();
         }
-
-        // DELETE USER LOGIC
-        async function deleteUser(username) {
-            if(!confirm(`WARNING: Are you sure you want to permanently terminate access for user: ${username}?`)) return;
+        
+        async function updateTeamMember() {
+            const formData = new FormData();
+            formData.append('roleId', document.getElementById('team-role').value);
+            formData.append('memberName', document.getElementById('team-name').value);
+            formData.append('memberTag', document.getElementById('team-tag').value);
             
-            try {
-                const res = await fetch(`/api/admin/delete-user/${username}`, { method: 'DELETE' });
-                const result = await res.json();
-                
-                if(result.success) {
-                    window.location.reload();
-                } else {
-                    alert('Error: Could not terminate user.');
-                }
-            } catch(e) {
-                console.error("Deletion failed", e);
+            const fileInput = document.getElementById('team-photo');
+            if (fileInput.files.length > 0) formData.append('photo', fileInput.files[0]);
+
+            const btn = document.getElementById('update-team-btn');
+            btn.innerText = "Encrypting and Uploading..."; btn.disabled = true;
+
+            const res = await fetch('/api/superadmin/update-team-member', { method: 'POST', body: formData });
+            const result = await res.json();
+            
+            if (result.success) {
+                alert("Database Updated! \nRefresh the Team page to see the changes.");
+                document.getElementById('team-name').value = '';
+                document.getElementById('team-tag').value = '';
+                fileInput.value = '';
+            } else {
+                alert("Update Sequence Failed.");
             }
+            btn.innerText = "Update Live Database"; btn.disabled = false;
         }
 
-        async function logout() {
-            await fetch('/api/logout', { method: 'POST' });
-            window.location.href = 'login.html';
-        }
-
-        // NEW SIMPLE DIRECT-TO-GOOGLE AI AGENT LOGIC
-       async function askGeminiDirectly() {
-            const queryText = document.getElementById('ai-query').value;
-            const responseBox = document.getElementById('ai-response');
-            
-            if (!queryText) return;
-            
-            responseBox.innerText = "> Agent is accessing live market data...";
-            responseBox.style.color = "#8b949e";
-    
-            // !!! PASTE YOUR API KEY RIGHT HERE !!!
-            const API_KEY = "AIzaSyCHElJaf9MO05VI5-DOZAipN5h2XbPDTA4"; 
-            
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
-    
-            try {
-                const response = await fetch(url, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: "You are the quantitative AI for QUANT∑ODE. Provide the exact current live stock price or answer the query: " + queryText }] }],
-                        // THIS IS THE NEW LINE THAT TURNS ON THE LIVE INTERNET CONNECTION:
-                        tools: [{ googleSearch: {} }] 
-                    })
-                });
-    
-                const data = await response.json();
-                
-                const answer = data.candidates[0].content.parts[0].text;
-                responseBox.innerText = "> FINAL REPORT:\n\n" + answer;
-                responseBox.style.color = "var(--quant-green)";
-    
-            } catch (error) {
-                console.error(error);
-                responseBox.innerText = "> ERROR: Could not connect to the AI. Check your API key.";
-                responseBox.style.color = "#ff4444";
-            }
-        }
-
-        loadDashboard();
+        async function logout() { await fetch('/api/logout', { method: 'POST' }); window.location.href = '/login.html'; }
+        initDashboard();
     </script>
 </body>
 </html>
+
 
 
 
