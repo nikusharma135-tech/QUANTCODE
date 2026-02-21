@@ -101,8 +101,8 @@
 
         <div class="glass-panel" style="border-top: 2px solid #7000ff;">
             <h2>Ask the Quant Agent_</h2>
-            <input type="text" id="ai-query" placeholder="e.g. What is the price of Reliance?">
-            <button onclick="pingPythonBrain()" style="background: #7000ff; color: white;">Initialize Scan</button>
+            <input type="text" id="ai-query" placeholder="e.g. What is algorithmic trading?">
+            <button onclick="askGeminiDirectly()" style="background: #7000ff; color: white;">Initialize Scan</button>
             <div id="ai-response" style="margin-top: 15px; white-space: pre-wrap;"></div>
         </div>
     </div>
@@ -112,7 +112,7 @@
     </footer>
 
     <script>
-        // Vanta JS
+        // Vanta JS Background
         const isMobile = window.innerWidth <= 768;
         VANTA.NET({
             el: "#webgl-background",
@@ -224,24 +224,39 @@
             window.location.href = 'login.html';
         }
 
-        // AI Agent Logic
-        async function pingPythonBrain() {
+        // NEW SIMPLE DIRECT-TO-GOOGLE AI AGENT LOGIC
+        async function askGeminiDirectly() {
             const queryText = document.getElementById('ai-query').value;
             const responseBox = document.getElementById('ai-response');
             
-            if(!queryText) return;
-            responseBox.innerText = "> Agent is thinking... routing request to Python backend...";
+            if (!queryText) return;
+            
+            responseBox.innerText = "> Agent is thinking...";
             responseBox.style.color = "#8b949e";
-
+    
+            // !!! PASTE YOUR API KEY RIGHT HERE !!!
+            const API_KEY = "AIzaSyCHElJaf9MO05VI5-DOZAipN5h2XbPDTA4"; 
+            
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
+    
             try {
-                const res = await fetch('http://localhost:5000/api/ask-agent', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: queryText })
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: "You are an AI for the QUANT∑ODE club. Answer this: " + queryText }] }]
+                    })
                 });
-                const data = await res.json();
-                responseBox.innerText = "> FINAL REPORT:\n\n" + data.answer;
+    
+                const data = await response.json();
+                
+                const answer = data.candidates[0].content.parts[0].text;
+                responseBox.innerText = "> FINAL REPORT:\n\n" + answer;
                 responseBox.style.color = "var(--quant-green)";
+    
             } catch (error) {
-                responseBox.innerText = "> ERROR: Python Brain is unreachable.";
+                console.error(error);
+                responseBox.innerText = "> ERROR: Could not connect to the AI. Check your API key.";
                 responseBox.style.color = "#ff4444";
             }
         }
