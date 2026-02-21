@@ -225,17 +225,17 @@
         }
 
         // NEW SIMPLE DIRECT-TO-GOOGLE AI AGENT LOGIC
-        async function askGeminiDirectly() {
+       async function askGeminiDirectly() {
             const queryText = document.getElementById('ai-query').value;
             const responseBox = document.getElementById('ai-response');
             
             if (!queryText) return;
             
-            responseBox.innerText = "> Agent is thinking...";
+            responseBox.innerText = "> Agent is accessing live market data...";
             responseBox.style.color = "#8b949e";
     
             // !!! PASTE YOUR API KEY RIGHT HERE !!!
-            const API_KEY = "AIzaSyCHElJaf9MO05VI5-DOZAipN5h2XbPDTA4"; 
+            const API_KEY = "PUT_YOUR_API_KEY_HERE"; 
             
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
     
@@ -244,7 +244,9 @@
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: "You are an AI for the QUANT∑ODE club. Answer this: " + queryText }] }]
+                        contents: [{ parts: [{ text: "You are the quantitative AI for QUANT∑ODE. Provide the exact current live stock price or answer the query: " + queryText }] }],
+                        // THIS IS THE NEW LINE THAT TURNS ON THE LIVE INTERNET CONNECTION:
+                        tools: [{ googleSearch: {} }] 
                     })
                 });
     
@@ -265,4 +267,5 @@
     </script>
 </body>
 </html>
+
 
